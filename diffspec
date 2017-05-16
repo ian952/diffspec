@@ -19,9 +19,9 @@ passed=1
 
 if [ -z "$3" ]; then
     echo "Running all tests" >&2
-    tests=($(ls specs/*.in))
+    tests=$(ls specs/*.in)
 else
-    tests=("tests/$3.in")
+    tests="tests/$3.in"
 fi
 
 if [ ! -x "$prog" ]; then
