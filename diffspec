@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # Usage:  diffspec [-v] program provided [specname]
 # The test must be under the specs/ directory.
 # If no testname is specified, all tests under specs/ will be ran.
