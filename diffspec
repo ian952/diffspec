@@ -1,7 +1,8 @@
 #!/bin/bash
-# Usage:  diffspec program provided [specname]
+# Usage:  diffspec [-v] program provided [specname]
 # The test must be under the specs/ directory.
 # If no testname is specified, all tests under specs/ will be ran.
+# Use -v to turn on verbose mode. Output will be printed for passing tests as well.
 # Creds to CS 247 TA for parts of the code!!!
 
 RED='\033[0;31m'
@@ -11,6 +12,13 @@ NC='\033[0m' # No Color
 if [ $# -lt 2 ]; then
     echo "Usage:  $0 program provided [specname]" >&2
     exit 1
+fi
+
+if [ $1 == "-v" ]; then
+    verbose=1
+    shift
+else
+    verbose=0
 fi
 
 prog=$1
@@ -63,7 +71,9 @@ for test in $tests; do
         echo -e "${NC}"
     else
         echo -e "${GREEN}Pass: $test${NC}"
-        print_output
+        if [[ $verbose -eq 1 ]]; then
+            print_output
+        fi
     fi
 
     rm $outfile
