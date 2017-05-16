@@ -1,0 +1,64 @@
+#!/bin/bash
+# Usage:  diffspec program provided [testname]
+# The test must be under the tests/ directory. 
+# If no testname is specified, all tests under tests/ will be ran.
+
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+NC='\033[0m' # No Color
+
+if [ $# -lt 2 ]; then
+    echo "Usage:  $0 tests program provided" >&2
+    exit 1
+fi
+
+prog=$1
+prov=$2
+passed=1
+
+if [ -z "$3" ]; then
+    echo "Running all tests" >&2
+    tests=($(ls tests/*.in))
+else
+    tests=("tests/$3.in")
+fi
+
+if [ ! -x "$prog" ]; then
+    echo "Executable $prog does not exist or is not executable" >&2
+    exit 1
+fi
+
+if [ ! -x "$prov" ]; then
+    echo "Executable $prov does not exist or is not executable" >&2
+    exit 1
+fi
+
+for test in $tests; do
+    infile=$test
+    outfile=`mktemp`
+    provfile=`mktemp`
+    if [ ! -r "$infile" ]; then
+        echo "File $infile does not exist or is not readable" >&2
+        exit 1
+    fi
+    ./"$prog" < "$infile" &> "$outfile"
+    ./"$prov" < "$infile" &> "$provfile"
+    if ! diff "$outfile" "$provfile" > /dev/null; then
+        passed=0
+        echo -e "${RED}Fail: $test"
+        echo "Input:"
+        cat $infile
+        echo -e "\n${GREEN}Expected output:"
+        cat $provfile
+        echo -e "\n${RED}Actual output:"
+        cat $outfile
+        echo -e "${NC}"
+    else
+        echo -e "${GREEN}Pass: $test${NC}"
+    fi
+    rm $outfile
+    rm $provfile
+done
+if [ $passed = 1 ]; then
+    echo -e "✅ ${GREEN} All tests passed${NC} 💯"
+fi
