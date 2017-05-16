@@ -21,7 +21,7 @@ if [ -z "$3" ]; then
     echo "Running all tests" >&2
     tests=$(ls specs/*.in specs/**/*.in)
 else
-    tests="tests/$3.in"
+    tests="specs/$3.in"
 fi
 
 if [ ! -x "$prog" ]; then
@@ -34,6 +34,15 @@ if [ ! -x "$prov" ]; then
     exit 1
 fi
 
+print_output() {
+    echo "Input:"
+    cat $infile
+    echo -e "\n${GREEN}Expected output:"
+    cat $provfile
+    echo -e "\n${RED}Actual output:"
+    cat $outfile
+}
+
 for test in $tests; do
     infile=$test
     outfile=`mktemp`
@@ -44,22 +53,23 @@ for test in $tests; do
     fi
     ./"$prog" < "$infile" &> "$outfile"
     ./"$prov" < "$infile" &> "$provfile"
-    if ! diff "$outfile" "$provfile" > /dev/null; then
+    diffRes=$(diff "$outfile" "$provfile")
+    if [ "$diffRes" != "" ]; then
         passed=0
-        echo -e "${RED}Fail: $test"
-        echo "Input:"
-        cat $infile
-        echo -e "\n${GREEN}Expected output:"
-        cat $provfile
-        echo -e "\n${RED}Actual output:"
-        cat $outfile
+        echo -e "${RED}Fail: $test\n"
+        print_output
+        echo -e "\n\nDiff:"
+        echo -e $diffRes
         echo -e "${NC}"
     else
         echo -e "${GREEN}Pass: $test${NC}"
+        print_output
     fi
+
     rm $outfile
     rm $provfile
 done
+
 if [ $passed = 1 ]; then
-    echo -e "✅ ${GREEN} All tests passed${NC} 💯"
+    echo -e "\n✅ ${GREEN} All tests passed${NC} 💯"
 fi
