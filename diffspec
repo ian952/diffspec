@@ -1,7 +1,7 @@
 #!/bin/bash
 # Usage:  diffspec program provided [testname]
-# The test must be under the tests/ directory. 
-# If no testname is specified, all tests under tests/ will be ran.
+# The test must be under the specs/ directory.
+# If no testname is specified, all tests under specs/ will be ran.
 
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -18,7 +18,7 @@ passed=1
 
 if [ -z "$3" ]; then
     echo "Running all tests" >&2
-    tests=($(ls tests/*.in))
+    tests=($(ls specs/*.in))
 else
     tests=("tests/$3.in")
 fi
