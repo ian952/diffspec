@@ -14,20 +14,21 @@ if [ $# -lt 2 ]; then
     exit 1
 fi
 
-if [ $1 == "-v" ]; then
+if [ "$1" == "-v" ]; then
     verbose=1
     shift
 else
     verbose=0
 fi
 
-prog=$1
-prov=$2
+prog="$1"
+prov="$2"
 passed=1
 
 if [ -z "$3" ]; then
     echo "Running all tests" >&2
-    tests=$(ls specs/*.in specs/**/*.in)
+    # TODO: handle spaces properly
+    tests="$(ls specs/*.in specs/**/*.in)"
 else
     tests="specs/$3.in"
 fi
@@ -44,17 +45,17 @@ fi
 
 print_output() {
     echo "Input:"
-    cat $infile
+    cat "$infile"
     echo -e "\n${GREEN}Expected output:"
-    cat $provfile
+    cat "$provfile"
     echo -e "\n${RED}Actual output:"
-    cat $outfile
+    cat "$outfile"
 }
 
 for test in $tests; do
-    infile=$test
-    outfile=`mktemp`
-    provfile=`mktemp`
+    infile="$test"
+    outfile=$(mktemp)
+    provfile=$(mktemp)
     if [ ! -r "$infile" ]; then
         echo "File $infile does not exist or is not readable" >&2
         exit 1
@@ -76,10 +77,10 @@ for test in $tests; do
         fi
     fi
 
-    rm $outfile
-    rm $provfile
+    rm "$outfile"
+    rm "$provfile"
 done
 
-if [ $passed = 1 ]; then
+if [ "$passed" = 1 ]; then
     echo -e "\n✅ ${GREEN} All tests passed${NC} 💯"
 fi
