@@ -67,14 +67,16 @@ for test in $tests; do
         exit 1
     fi
     ./"$prog" < "$infile" &> "$outfile"
+    echo "\n" >> "$outfile"
     ./"$prov" < "$infile" &> "$provfile"
-    diffRes=$(diff "$outfile" "$provfile")
+    echo "\n" >> "$provfile"
+    diffRes=$(diff -u "$provfile" "$outfile")
     if [ "$diffRes" != "" ]; then
         passed=0
         echo -e "${RED}Fail: $test\n"
         print_output
         echo -e "\n\nDiff:"
-        echo -e $diffRes
+        echo -e "${diffRes}"
         echo -e "${NC}"
     else
         echo -e "${GREEN}Pass: $test${NC}"
