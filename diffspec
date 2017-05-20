@@ -28,7 +28,13 @@ passed=1
 if [ -z "$3" ]; then
     echo "Running all tests" >&2
     # TODO: handle spaces properly
-    tests="$(ls specs/*.in specs/**/*.in)"
+
+    subdircount=`find specs/* -maxdepth 1 -type d | wc -l`
+    if [ $subdircount -eq 0 ]; then
+        tests="$(ls specs/*.in)"
+    else
+        tests="$(ls specs/*.in specs/**/*.in)"
+    fi
 else
     tests="specs/$3.in"
 fi
