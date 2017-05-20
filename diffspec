@@ -67,9 +67,7 @@ for test in $tests; do
         exit 1
     fi
     ./"$prog" < "$infile" &> "$outfile"
-    echo "\n" >> "$outfile"
     ./"$prov" < "$infile" &> "$provfile"
-    echo "\n" >> "$provfile"
     diffRes=$(diff -u "$provfile" "$outfile")
     if [ "$diffRes" != "" ]; then
         passed=0
