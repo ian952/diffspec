@@ -5,9 +5,9 @@
 # Use -v to turn on verbose mode. Output will be printed for passing tests as well.
 # Creds to CS 247 TA for parts of the code!!!
 
-RED=$(setterm --foreground red)
-GREEN=$(setterm --foreground green)
-NC=$(setterm --default)
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+NC='\033[0m' # No Color
 
 if [ $# -lt 2 ]; then
     echo "Usage:  $0 program provided [specname]" >&2
